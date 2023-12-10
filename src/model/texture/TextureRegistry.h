@@ -25,6 +25,7 @@ public:
     void registerCubeMapTexture(
             const TextureId &textureName,
             GLuint slot,
+            GLuint unit,
             const std::string &posX,
             const std::string &negX,
             const std::string &posY,
@@ -36,6 +37,7 @@ public:
     void registerSimpleTexture(
             const TextureId &textureName,
             GLuint slot,
+            GLuint unit,
             const std::string &path
     );
 

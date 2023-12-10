@@ -16,7 +16,7 @@ std::string loadFile(const std::string &fileName) {
     return fileData.str();
 }
 
-Shader *ShaderLoader::loadShader(const std::string &vertexFile, const std::string &fragmentFile) {
+ShaderLoader::ShaderEntry ShaderLoader::loadShader(const std::string &vertexFile, const std::string &fragmentFile) {
     std::cout << "Shader::loadShader " << vertexFile << " " << fragmentFile << std::endl;
 
     std::string vertexShaderString = loadFile(vertexFile);
@@ -77,5 +77,5 @@ Shader *ShaderLoader::loadShader(const std::string &vertexFile, const std::strin
         std::cout << "Shader: Load OK" << std::endl;
     }
 
-    return new Shader(shaderProgramID, vertexID, fragmentID);
+    return {shaderProgramID, vertexID, fragmentID};
 }

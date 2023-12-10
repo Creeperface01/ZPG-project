@@ -5,42 +5,44 @@
 #include <memory>
 #include <vector>
 
+#include "AssimpLoader.h"
 #include "BaseModel.h"
-#include "shader/Shader.h"
-#include "shader/ShaderRegistry.h"
 #include "texture/Texture.h"
 
 using ModelId = std::string;
 
 class ModelRegistry {
 private:
-    static ModelRegistry *_instance;
+    static ModelRegistry* _instance;
 
     std::unordered_map<ModelId, std::unique_ptr<BaseModel>> _models;
+
+    AssimpLoader _assimpLoader;
 
     void registerDefaultModels();
 
     friend class Application;
+
 public:
-    static ModelRegistry *get();
+    static ModelRegistry* get();
 
     void registerArrayModel(
-            const ModelId &name,
-            Shader *shader,
-            Texture *texture,
-            const std::vector<glm::vec3> &vertices,
-            const std::vector<glm::vec3> &normals
+        const ModelId& name,
+        const std::vector<ModelAttribute>& attributes
     );
 
-    void registerArrayModel(
-            const ModelId &name,
-            const ShaderId &shader,
-            Texture *texture,
-            const std::vector<glm::vec3> &vertices,
-            const std::vector<glm::vec3> &normals
+    void registerElementModel(
+        const ModelId& name,
+        const std::vector<GLushort>& elements,
+        const std::vector<ModelAttribute>& attributes
     );
 
-    [[nodiscard]] BaseModel *getModel(const ModelId &name) const;
+    void registerObjModel(
+        const ModelId& name,
+        const std::string& fileName
+    );
+
+    [[nodiscard]] BaseModel* getModel(const ModelId& name) const;
 
     std::vector<BaseModel *> getAll();
 };

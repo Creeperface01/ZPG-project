@@ -21,6 +21,12 @@
 class Scene;
 
 class Window : public Noncopyable {
+public:
+    struct properties {
+        int width = 1000;
+        int height = 600;
+        std::string title;
+    };
 private:
     static std::unordered_map<GLFWwindow *, Window *> _map;
 
@@ -35,6 +41,8 @@ private:
     std::unique_ptr<Keyboard> _keyboard;
     std::unique_ptr<Cursor> _cursor;
 
+    properties _properties;
+
     void initCallbacks();
 
     void pollEvents();
@@ -46,12 +54,6 @@ private:
     void checkClosed() const;
 
 public:
-    struct properties {
-        int width = 1000;
-        int height = 600;
-        std::string title;
-    };
-
     explicit Window(const properties &properties);
 
     virtual ~Window();
@@ -77,4 +79,8 @@ public:
     [[nodiscard]] bool isClosed() const;
 
     void clearDepth();
+
+    GLFWwindow *getNativeWindow() const;
+
+    const properties getProperties() const;
 };

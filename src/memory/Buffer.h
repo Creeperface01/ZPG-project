@@ -48,7 +48,7 @@ public:
 
     void stopUsing() override;
 
-    void setData(GLsizeiptr size, const void *data);
+    void setData(size_t size, const void *data);
 
     template<typename T>
     void setData(const std::vector<T> &data) {

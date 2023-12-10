@@ -1,13 +1,25 @@
 #include "BaseModel.h"
 
-#include <functional>
-
-#include <glm/gtx/string_cast.hpp>
-
 #include "shader/ShaderRegistry.h"
-#include "../util/debug.h"
 
-void BaseModel::addBuffer(Buffer *buffer) {
+BaseModel::BaseModel(const std::vector<ModelAttribute>& vertexAttributes) {
+    this->addBuffer(Buffer::create(Buffer::Type::VERTEX_ARRAY)); // create vao
+
+    _vao->use([this, &vertexAttributes]() {
+        int i = 0;
+        for (const auto& attribute: vertexAttributes) {
+            const auto buffer = Buffer::create(Buffer::Type::ARRAY);
+            buffer->setData(
+                attribute.getByteSize(),
+                attribute.getData()
+            );
+
+            this->addAttributeBuffer(buffer, i++, attribute);
+        }
+    });
+}
+
+void BaseModel::addBuffer(Buffer* buffer) {
     if (auto vb = dynamic_cast<VertexArrayBuffer *>(buffer); vb != nullptr) {
         this->_vao.reset(vb);
         return;
@@ -16,44 +28,38 @@ void BaseModel::addBuffer(Buffer *buffer) {
     this->_buffers.emplace_back(buffer);
 }
 
-BaseModel::BaseModel(Shader *shader, Texture *texture) : _shader(shader), _texture(texture) {
-    this->addBuffer(Buffer::create(Buffer::Type::VERTEX_ARRAY)); // create vao
-}
-
-void BaseModel::draw(
-        const glm::mat4 &modelMatrix
-) {
-    _shader->use([this, &modelMatrix](Shader &shader) {
-        if (_texture != nullptr) { //TODO: improve
-            _texture->startUsing();
-            shader.hasTexture = true;
-            shader.textureUnitID = _texture->getSlot();
-        } else {
-            shader.hasTexture = false;
-        }
-
-        shader.modelMatrix = modelMatrix;
-
-        _vao->use([this, &shader]() {
-            drawCallback(shader);
-        });
-
-        if (_texture != nullptr) {
-            _texture->stopUsing();
-        }
+void BaseModel::draw(const Shader& shader) const {
+    _vao->use([this, &shader]() {
+        drawCallback(shader);
     });
 }
 
-void BaseModel::drawCallback(const Shader &shader) {
-
+void BaseModel::drawCallback(const Shader& shader) const {
 }
 
-void BaseModel::addAttributeBuffer(Buffer *buffer, GLuint index, GLint components, GLenum type) {
+void BaseModel::addAttributeBuffer(Buffer* buffer, GLuint bufferIndex, GLint components, GLenum type) {
     this->addBuffer(buffer);
 
-    buffer->use([index, components, type]() {
-        debugGlCall(glEnableVertexAttribArray, index);
-        debugGlCall(glVertexAttribPointer, index, components, type, GL_FALSE, 0, (GLvoid *) nullptr);
+    buffer->use([bufferIndex, components, type]() {
+        debugGlCall(glEnableVertexAttribArray, bufferIndex);
+        debugGlCall(glVertexAttribPointer, bufferIndex, components, type, GL_FALSE, 0, (GLvoid *) nullptr);
+    });
+}
+
+void BaseModel::addAttributeBuffer(Buffer* buffer, GLuint bufferIndex, const ModelAttribute& attribute) {
+    this->addBuffer(buffer);
+
+    buffer->use([bufferIndex, attribute]() {
+        debugGlCall(glEnableVertexAttribArray, bufferIndex);
+        debugGlCall(
+            glVertexAttribPointer,
+            bufferIndex,
+            attribute.getComponents(),
+            attribute.getType(),
+            GL_FALSE,
+            0,
+            (GLvoid *) nullptr
+        );
     });
 }
 

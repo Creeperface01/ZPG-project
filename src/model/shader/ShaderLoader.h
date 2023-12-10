@@ -12,5 +12,11 @@
 class ShaderLoader {
 
 public:
-    static Shader *loadShader(const std::string &vertexFile, const std::string &fragmentFile);
+    struct ShaderEntry {
+        GLuint _programId;
+        GLuint _vertexId;
+        GLuint _fragmentId;
+    };
+
+    static ShaderEntry loadShader(const std::string &vertexFile, const std::string &fragmentFile);
 };

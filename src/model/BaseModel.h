@@ -13,45 +13,35 @@
 #include "../memory/Buffer.h"
 #include "../memory/VertexArrayBuffer.h"
 #include "../util/Noncopyable.h"
+#include "attribute/ModelAttribute.h"
 #include "shader/ShaderRegistry.h"
-#include "texture/Texture.h"
 
 class BaseModel : public Noncopyable {
 private:
     std::vector<std::unique_ptr<Buffer>> _buffers;
 
-    Shader *_shader;
-
-    Texture *_texture;
-
 protected:
     std::unique_ptr<VertexArrayBuffer> _vao;
 
 public:
-//    struct VertexAttribute {
-//        GLuint index;
-//        GLint components;
-//        GLenum type = GL_FLOAT;
-//    };
-
-    explicit BaseModel(Shader *shader, Texture *texture = nullptr);
+    explicit BaseModel(const std::vector<ModelAttribute>& vertexAttributes);
 
     void addBuffer(Buffer *buffer);
 
-    void addAttributeBuffer(Buffer *buffer, GLuint index, GLint components, GLenum type = GL_FLOAT);
+    void addAttributeBuffer(Buffer *buffer, GLuint bufferIndex, GLint components, GLenum type = GL_FLOAT);
+
+    void addAttributeBuffer(Buffer *buffer, GLuint bufferIndex, const ModelAttribute &attribute);
 
 //    void addMultiAttributeBuffer(
 //            Buffer *buffer,
 //            const std::initializer_list<VertexAttribute> &attributes
 //    );
 
-    void draw(
-            const glm::mat4 &modelMatrix
-    );
+    void draw(const Shader &shader) const;
 
 protected:
 
-    virtual void drawCallback(const Shader &shader);
+    virtual void drawCallback(const Shader &shader) const;
 
     void useBuffers(const std::function<void()> &callback) const;
 };

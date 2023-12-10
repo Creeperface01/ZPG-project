@@ -4,6 +4,6 @@
 
 TranslateTransform::TranslateTransform(const glm::vec3 &position) : _position(position) {}
 
-glm::mat4 TranslateTransform::transform(const glm::mat4 &modelMatrix) {
+glm::mat4 TranslateTransform::transform(const glm::mat4 &modelMatrix) const {
     return glm::translate(modelMatrix, this->_position);
 }

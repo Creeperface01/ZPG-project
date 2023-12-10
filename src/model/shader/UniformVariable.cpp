@@ -1,5 +1,8 @@
 #include "UniformVariable.h"
 
+#include <iostream>
+#include "glm/gtx/string_cast.hpp"
+
 template<>
 UniformVariable<GLint> &UniformVariable<GLint>::operator=(const GLint &value) {
     checkExists();

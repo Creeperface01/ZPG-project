@@ -2,7 +2,16 @@
 
 #include "../util/debug.h"
 
-void ArrayModel::drawCallback(const Shader &shader) {
+ArrayModel::ArrayModel(const std::vector<ModelAttribute>& vertexAttributes) : BaseModel(vertexAttributes) {
+    if (vertexAttributes.empty()) {
+        throw std::runtime_error("Cannot create array model with no vertex attributes");
+    }
+
+    _vertexCount = vertexAttributes.begin()->getSize();
+    assert(_vertexCount > 0 && "Invalid vertex count");
+}
+
+void ArrayModel::drawCallback(const Shader &shader) const {
     debugGlCall(
             glDrawArrays,
             GL_TRIANGLES,

@@ -7,15 +7,28 @@
 #include "../../util/Usable.h"
 
 class Texture : public Noncopyable, public Usable<Texture> {
+public:
+    enum Type {
+        CUBE_MAP,
+        TEXTURE_2D
+    };
 private:
     GLuint _id;
 
-    GLint _slot;
+    GLuint _slot;
+
+    GLuint _unit;
+
+    Type _type;
+
+    GLenum getOpenGlTextureType() const;
 
 public:
-    explicit Texture(GLuint id, GLint slot);
+    Texture(GLuint id, GLuint slot, GLuint unit, Type type);
 
-    [[nodiscard]] GLint getSlot() const;
+    [[nodiscard]] GLuint getSlot() const;
+
+    [[nodiscard]] GLuint getUnit() const;
 
     void startUsing() override;
 

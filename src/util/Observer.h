@@ -3,5 +3,5 @@
 template<typename T>
 class Observer {
 public:
-    virtual void update(T *subject) = 0;
+    virtual void update(T subject) = 0;
 };

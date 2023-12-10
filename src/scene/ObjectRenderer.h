@@ -1,17 +1,15 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <unordered_set>
+#include <unordered_map>
+#include <optional>
 
-#include "DrawableObject.h"
-#include "../model/shader/Shader.h"
+#include "object/DrawableObject.h"
 #include "Camera.h"
 
 
 class ObjectRenderer {
 private:
-    std::vector<DrawableObject *> _objects;
+    std::unordered_map<size_t, DrawableObject *> _objects;
 
     Camera &_camera;
 
@@ -22,4 +20,5 @@ public:
 
     void addObject(DrawableObject *);
 
+    std::optional<DrawableObject*> getObject(size_t id) const;
 };

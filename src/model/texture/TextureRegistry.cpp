@@ -40,6 +40,7 @@ void TextureRegistry::registerDefaultTextures() {
     registerCubeMapTexture(
             DefaultTextures::SKY_BOX,
             GL_TEXTURE0,
+            0,
             "assets/textures/cube/posx.jpg",
             "assets/textures/cube/negx.jpg",
             "assets/textures/cube/posy.jpg",
@@ -50,8 +51,37 @@ void TextureRegistry::registerDefaultTextures() {
 
     registerSimpleTexture(
             DefaultTextures::GRASS,
-            GL_TEXTURE1,
+            GL_TEXTURE0,
+            0,
             "assets/textures/grass.png"
+    );
+
+    registerSimpleTexture(
+            DefaultTextures::HOUSE,
+            GL_TEXTURE0,
+            0,
+            "assets/textures/house.png"
+    );
+
+    registerSimpleTexture(
+            DefaultTextures::WOODEN_FENCE,
+            GL_TEXTURE0,
+            0,
+            "assets/textures/wooden_fence.png"
+    );
+
+    registerSimpleTexture(
+            DefaultTextures::SKYDOME,
+            GL_TEXTURE0,
+            0,
+            "assets/textures/skydome.png"
+    );
+
+    registerSimpleTexture(
+            DefaultTextures::ZOMBIE,
+            GL_TEXTURE0,
+            0,
+            "assets/textures/zombie.png"
     );
 }
 
@@ -88,6 +118,7 @@ void
 TextureRegistry::registerCubeMapTexture(
         const TextureId &textureName,
         GLuint slot,
+        GLuint unit,
         const std::string &posX,
         const std::string &negX,
         const std::string &posY,
@@ -111,10 +142,10 @@ TextureRegistry::registerCubeMapTexture(
         throw std::runtime_error("Could not load texture");
     }
 
-    _textures[textureName] = std::make_unique<Texture>(id, slot);
+    _textures[textureName] = std::make_unique<Texture>(id, slot, unit, Texture::Type::CUBE_MAP);
 }
 
-void TextureRegistry::registerSimpleTexture(const TextureId &textureName, GLuint slot, const std::string &path) {
+void TextureRegistry::registerSimpleTexture(const TextureId &textureName, GLuint slot, GLuint unit, const std::string &path) {
     assert(!_textures.contains(textureName) && "Texture already registered");
 
     GLuint id = SOIL_load_OGL_texture(
@@ -128,5 +159,5 @@ void TextureRegistry::registerSimpleTexture(const TextureId &textureName, GLuint
         throw std::runtime_error("Could not load texture");
     }
 
-    _textures[textureName] = std::make_unique<Texture>(id, slot);
+    _textures[textureName] = std::make_unique<Texture>(id, slot, unit, Texture::Type::TEXTURE_2D);
 }

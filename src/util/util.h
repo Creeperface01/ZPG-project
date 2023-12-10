@@ -9,6 +9,8 @@
 
 #include <glm/vec3.hpp>
 
+#include "debug.h"
+
 template<typename T>
 GLsizeiptr get_vector_size(const std::vector<T> &vec) {
     return static_cast<GLsizeiptr>(vec.size() * sizeof(T));
@@ -42,3 +44,5 @@ deferred_call defer0(const std::function<void()> &callback);
 #endif
 
 std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec);
+
+void check_gl_error();

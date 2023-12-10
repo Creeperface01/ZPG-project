@@ -13,6 +13,7 @@ include_directories( ${OPENGL_INCLUDE_DIRS} )
 
 include_directories( ${PROJECT_SOURCE_DIR}/lib/soil2/src )
 include_directories( ${PROJECT_SOURCE_DIR}/lib/stb )
+include_directories( ${PROJECT_SOURCE_DIR}/include )
 
 set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
@@ -31,12 +32,18 @@ file(GLOB_RECURSE SOURCES
         )
 
 find_package(GLEW 2.0 REQUIRED)
-
 find_package(ASSIMP REQUIRED)
 
 include_directories(${ASSIMP_INCLUDE_DIR})
 
-add_executable( cv1 ${SOURCES})
+add_executable( cv1 ${SOURCES}
+        src/scene/light/LightManager.cpp
+        src/scene/light/LightManager.h
+        src/util/math_utils.cpp
+        src/util/math_utils.h
+        src/model/shader/component/RotationObjectComponent.cpp
+        src/model/shader/component/RotationObjectComponent.h
+)
 target_link_libraries( cv1 ${OPENGL_LIBRARIES} glfw glm GLEW::GLEW
         ${ASSIMP_LIBRARIES}
         "${CMAKE_CURRENT_SOURCE_DIR}/lib/soil2/lib/macosx/libsoil2-debug.a"

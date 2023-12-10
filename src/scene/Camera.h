@@ -5,13 +5,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../util/Observer.h"
+#include "../util/Observable.h"
 #include "../io/Cursor.h"
 #include "../io/Keyboard.h"
 
-class Window;
+class Scene;
 
-class Camera : Observer<Cursor>, Observer<Keyboard::Press>, Observer<Keyboard::Hold> {
+class Camera : Observer<Cursor*>, Observer<Keyboard::Press*>, Observer<Keyboard::Hold*>, public Observable<Camera> {
 private:
+    Scene *_scene;
+
     float _fov = 45;
 
     float _renderDistance = 100;
@@ -21,7 +24,7 @@ private:
     bool _dirty = true;
 
     glm::vec3 _eye;
-    glm::vec3 _cameraOffset;
+    glm::vec3 _cameraDirection;
 
     glm::vec3 _motion = glm::zero<glm::vec3>();
 
@@ -33,7 +36,7 @@ private:
 
 public:
     explicit Camera(
-            Window &window,
+            Scene *scene,
             const glm::vec3 &position
     );
 
@@ -75,4 +78,11 @@ public:
 
     void setRenderDistance(float renderDistance);
 
+    void pointAt(const glm::vec3 &position);
+
+    void setDirection(const glm::vec3 &direction);
+
+    glm::vec3 getDirection() const;
+
+    glm::vec3 getCursorVector() const;
 };

@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <iostream>
+#include <chrono>
+#include <ctime>
+#include <thread>
 
 #include "window/Window.h"
 #include "scene/Scene.h"
@@ -11,8 +14,12 @@
 #include "model/ModelRegistry.h"
 #include "model/shader/ShaderRegistry.h"
 #include "model/texture/TextureRegistry.h"
+#include "demo/Demo.h"
 
-#include "Demo.h"
+using namespace std::chrono_literals;
+
+const int Application::FPS = 60;
+const int Application::FRAME_DURATION_NS = static_cast<int>(1000000000.f / static_cast<float>(FPS));
 
 Application::Application() {
     initCallbacks();
@@ -25,18 +32,26 @@ Application::Status Application::run() {
 
         initRegistry();
 
-        window->addKeyCallback([&window](const KeyData &data) {
+        window->addKeyCallback([&window](const KeyData& data) {
             if (data.action == GLFW_PRESS && data.key == GLFW_KEY_ESCAPE) {
                 window->close();
             }
         });
 
-        Demo::run(window.get());
+        Demo demo;
+        demo.run(window.get());
 
         while (!window->isClosed()) {
+            auto start = std::chrono::system_clock::now();
             window->draw();
+            auto end = std::chrono::system_clock::now();
+
+            auto render_duration = end - start;
+            auto sleepDuration = std::chrono::nanoseconds(FRAME_DURATION_NS) - render_duration;
+
+            std::this_thread::sleep_for(sleepDuration);
         }
-    } catch (std::exception &ex) {
+    } catch (std::exception& ex) {
         std::cerr << ex.what() << std::endl;
         debugGlCall(glfwTerminate);
         return Application::Status::ERROR;
@@ -59,8 +74,8 @@ void Application::initGLFW() const {
 
 void Application::initCallbacks() const {
     debugGlCall(glfwSetErrorCallback, [](int error, const char *description) {
-        std::cerr << '[' << error << ']' << " - " << description << std::endl;
-    });
+                throw std::runtime_error("[" + std::to_string(error) + "]" + " - " + description);
+                });
 }
 
 void Application::initRegistry() const {

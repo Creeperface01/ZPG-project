@@ -10,10 +10,12 @@ private:
 
     glm::vec3 _center;
 
+    float _radius;
+
     float _angle;
 
 public:
-    RotateTransform(const glm::vec3 &axis, const glm::vec3 &center, float angle);
+    RotateTransform(const glm::vec3 &axis, const glm::vec3 &center, float radius, float angle);
 
-    glm::mat4 transform(const glm::mat4 &modelMatrix) override;
+    glm::mat4 transform(const glm::mat4 &modelMatrix) const override;
 };

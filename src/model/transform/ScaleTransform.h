@@ -10,5 +10,7 @@ private:
 public:
     explicit ScaleTransform(const glm::vec3 &scale);
 
-    glm::mat4 transform(const glm::mat4 &modelMatrix) override;
+    glm::mat4 transform(const glm::mat4 &modelMatrix) const override;
+
+    glm::vec3 getScale() const;
 };

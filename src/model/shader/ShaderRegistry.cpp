@@ -4,17 +4,66 @@
 #include "ShaderLoader.h"
 #include "DefaultShaders.h"
 
+#include "component/ShaderComponent.h"
+#include "component/LightShaderComponent.h"
+#include "component/TextureShaderComponent.h"
+#include "component/ConstantColorShaderComponent.h"
+#include "component/ModelShaderComponent.h"
+
 ShaderRegistry *ShaderRegistry::_instance = new ShaderRegistry();
 
 void ShaderRegistry::registerDefaultShaders() {
-    registerShader(DefaultShaders::DEFAULT);
-    registerShader(DefaultShaders::CONSTANT);
+    registerShader(
+            DefaultShaders::STANDARD,
+            {
+                    ModelShaderComponent::factory,
+                    LightShaderComponent::factory,
+                    TextureShaderComponent::factory,
+                    ConstantColorShaderComponent::factory
+            }
+    );
+    registerShader(
+            DefaultShaders::CONSTANT_TEXTURE,
+            {
+                    TextureShaderComponent::factory
+            }
+    );
+    registerShader(
+            DefaultShaders::CONSTANT_COLOR,
+            {
+                    ModelShaderComponent::factory,
+                    ConstantColorShaderComponent::factory
+            }
+    );
+    registerShader(
+            DefaultShaders::SKYDOME,
+            {
+                    TextureShaderComponent::factory
+            }
+    );
 }
 
 void ShaderRegistry::registerShader(const ShaderId &name) {
+    registerShader(name, {});
+}
+
+void ShaderRegistry::registerShader(
+        const ShaderId &name,
+        const std::vector<Shader::shader_component_constructor *> &components
+) {
     assert(!_shaders.contains(name) && "Shader already registered");
 
-    auto shader = ShaderLoader::loadShader(SHADER_PATH + name + ".vert", SHADER_PATH + name + ".frag");
+    auto shaderEntry = ShaderLoader::loadShader(
+            SHADER_PATH + name + ".vert",
+            SHADER_PATH + name + ".frag"
+    );
+
+    auto shader = new Shader(
+            shaderEntry._programId,
+            shaderEntry._vertexId,
+            shaderEntry._fragmentId,
+            components
+    );
     _shaders[name] = std::unique_ptr<Shader>(shader);
 }
 

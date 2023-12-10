@@ -11,5 +11,5 @@ private:
 public:
     explicit TranslateTransform(const glm::vec3 &position);
 
-    glm::mat4 transform(const glm::mat4 &modelMatrix) override;
+    glm::mat4 transform(const glm::mat4 &modelMatrix) const override;
 };

@@ -23,4 +23,14 @@ namespace DefaultModels {
     const std::string TRIANGLE = "TRIANGLE";
 
     const std::string SKYCUBE = "SKYCUBE";
+
+    const std::string SKYDOME = "skydome";
+
+    const std::string HOUSE = "house";
+
+    const std::string BETTER_PLAIN = "better_plain";
+
+    const std::string ZOMBIE = "zombie";
+
+    const std::string TERRAIN = "terrain";
 }

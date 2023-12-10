@@ -4,7 +4,11 @@
 
 namespace DefaultShaders {
 
-    const std::string DEFAULT = "light_test";
+    const std::string STANDARD = "standard";
 
-    const std::string CONSTANT = "constant";
+    const std::string CONSTANT_TEXTURE = "constant_texture";
+
+    const std::string CONSTANT_COLOR = "constant_color";
+
+    const std::string SKYDOME = "skydome";
 }

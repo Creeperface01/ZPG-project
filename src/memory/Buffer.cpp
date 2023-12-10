@@ -9,7 +9,6 @@ std::unordered_map<Buffer::Type, std::mutex> Buffer::_bindLock;
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 
 Buffer::Buffer(Buffer::Type type) : _type(type) {
-
 }
 
 #pragma clang diagnostic pop
@@ -19,18 +18,24 @@ Buffer::Type Buffer::getType() const {
 }
 
 const GLfloat vertices[] = {
-        -1, 0, 0,
-        1, 0, 0,
-        0, 1, 0
+    -1, 0, 0,
+    1, 0, 0,
+    0, 1, 0
 };
 
-void Buffer::setData(GLsizeiptr size, const void *data) {
+void Buffer::setData(size_t size, const void* data) {
     if (_type == Type::VERTEX_ARRAY) {
         throw std::runtime_error("Unsupported buffer type");
     }
 
     use([this, size, data]() {
-        debugGlCall(glBufferData, to_integral(this->_type), size, data, GL_STATIC_DRAW);
+        debugGlCall(
+            glBufferData,
+            to_integral(this->_type),
+            static_cast<GLsizeiptr>(size),
+            data,
+            GL_STATIC_DRAW
+        );
     });
 }
 
@@ -39,7 +44,7 @@ void Buffer::startUsing() {
         _bindLock.emplace(std::piecewise_construct, std::make_tuple(_type), std::make_tuple());
     }
 
-    auto &mutex = _bindLock[_type];
+    auto& mutex = _bindLock[_type];
     if (!mutex.try_lock()) {
         throw BufferAlreadyBoundException("Buffer type " + std::to_string(to_integral(_type)) + "already bound");
     }
@@ -54,26 +59,26 @@ void Buffer::stopUsing() {
 
 Buffer::~Buffer() {
     debugGlCall(glDeleteBuffers, 1, &_id);;
-//    glDeleteBuffers(1, &_id);
+    //    glDeleteBuffers(1, &_id);
 }
 
-void Buffer::generate(GLuint &id) const {
+void Buffer::generate(GLuint& id) const {
     debugGlCall(glGenBuffers, 1, &id);
-//    glGenBuffers(1, &id);
+    //    glGenBuffers(1, &id);
 }
 
 void Buffer::bind() const {
     debugGlCall(glBindBuffer, to_integral(this->_type), _id);
-//    glBindBuffer(to_integral(this->_type), _id);
+    //    glBindBuffer(to_integral(this->_type), _id);
 }
 
 void Buffer::unbind() const {
     debugGlCall(glBindBuffer, to_integral(this->_type), 0);
-//    glBindBuffer(to_integral(this->_type), 0);
+    //    glBindBuffer(to_integral(this->_type), 0);
 }
 
-Buffer *Buffer::create(const Buffer::Type &type) {
-    Buffer *buf;
+Buffer* Buffer::create(const Buffer::Type& type) {
+    Buffer* buf;
     if (type == Type::VERTEX_ARRAY) {
         buf = new VertexArrayBuffer();
     } else {

@@ -2,8 +2,8 @@
 
 #include "../window/Window.h"
 
-Cursor::Cursor(Window &window) {
-    window.addCursorCallback([this](const CursorData &data) {
+Cursor::Cursor(Window* window) : _window(window) {
+    window->addCursorCallback([this](const CursorData& data) {
         if (first) {
             x = lastX = data.x;
             y = lastY = data.y;
@@ -36,4 +36,38 @@ float Cursor::getX() const {
 
 float Cursor::getY() const {
     return y;
+}
+
+Cursor::Mode Cursor::getMode() const {
+    return _mode;
+}
+
+void Cursor::setMode(Mode mode) {
+    _mode = mode;
+
+    auto glfwMode = _mode == Mode::NORMAL ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
+    debugGlCall(
+        glfwSetInputMode,
+        _window->getNativeWindow(),
+        GLFW_CURSOR,
+        glfwMode
+    );
+}
+
+size_t Cursor::getStencilBufferIndex() const {
+    size_t index;
+
+    auto windowProperties = _window->getProperties();
+    debugGlCall(
+        glReadPixels,
+        windowProperties.width / 2,
+        windowProperties.height / 2,
+        1,
+        1,
+        GL_STENCIL_INDEX,
+        GL_UNSIGNED_INT,
+        &index
+    );
+
+    return index;
 }

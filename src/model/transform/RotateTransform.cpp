@@ -8,19 +8,23 @@
 RotateTransform::RotateTransform(
         const glm::vec3 &axis,
         const glm::vec3 &center,
+        float radius,
         float angle
-) : _axis(axis), _center(center), _angle(angle) {}
+) : _axis(axis), _center(center), _radius(radius), _angle(angle) {}
 
-glm::mat4 RotateTransform::transform(const glm::mat4 &modelMatrix) {
-    if (_center == glm::zero<glm::vec3>()) {
-        return glm::rotate(modelMatrix, this->_angle, this->_axis);
-    }
+glm::mat4 RotateTransform::transform(const glm::mat4 &modelMatrix) const {
+//    if (_center == glm::zero<glm::vec3>()) {
+//        return glm::rotate(modelMatrix, this->_angle, this->_axis);
+//    }
 
     auto result = modelMatrix;
 
-    result = glm::translate(result, _center);
+    auto center = _center;
+//    center -= glm::vec3(_radius, _radius, _radius);
+
+    result = glm::translate(result, center);
     result = glm::rotate(result, _angle, _axis);
-    result = glm::translate(result, -_center);
+    result = glm::translate(result, -center);
 
     return result;
 }
